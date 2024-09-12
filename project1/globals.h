@@ -1,9 +1,10 @@
 /****************************************************/
 /* File: globals.h                                  */
-/* Global types and vars for TINY compiler          */
+/* Global types and vars for C-Minus compiler       */
 /* must come before other include files             */
 /* Compiler Construction: Principles and Practice   */
 /* Kenneth C. Louden                                */
+/* modified by Yejin Lee                            */
 /****************************************************/
 
 #ifndef _GLOBALS_H_
@@ -23,17 +24,17 @@
 #endif
 
 /* MAXRESERVED = the number of reserved words */
-#define MAXRESERVED 8
+#define MAXRESERVED 6
 
 typedef enum 
     /* book-keeping tokens */
    {ENDFILE,ERROR,
     /* reserved words */
-    IF,THEN,ELSE,END,REPEAT,UNTIL,READ,WRITE,
+    IF,ELSE,WHILE,RETURN,INT,VOID,
     /* multicharacter tokens */
     ID,NUM,
     /* special symbols */
-    ASSIGN,EQ,LT,PLUS,MINUS,TIMES,OVER,LPAREN,RPAREN,SEMI
+    ASSIGN,EQ,NEQ,LESSTHAN,LESSEQUAL,GREATTHAN,GREATEQUAL,PLUS,MINUS,MUL,DIV,LPAREN,RPAREN,LBRACE,RBRACE,LCURLY,RCURLY,SEMICOLON,COMMA
    } TokenType;
 
 extern FILE* source; /* source code text file */
