@@ -34,7 +34,8 @@ typedef enum
     /* multicharacter tokens */
     ID,NUM,
     /* special symbols */
-    ASSIGN,EQ,NEQ,LESSTHAN,LESSEQUAL,GREATTHAN,GREATEQUAL,PLUS,MINUS,MUL,DIV,LPAREN,RPAREN,LBRACE,RBRACE,LCURLY,RCURLY,SEMICOLON,COMMA
+    // + - * / = ; , ( ) { } [ ] < <= > >= == !=
+    PLUS,MINUS,MUL,DIV,ASSIGN,SEMICOLON,COMMA,LPAREN,RPAREN,LCURLY,RCURLY,LBRACE,RBRACE,LESSTHAN,LESSEQUAL,GREATTHAN,GREATEQUAL,EQ,NEQ,
    } TokenType;
 
 extern FILE* source; /* source code text file */
