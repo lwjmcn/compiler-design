@@ -1,0 +1,6 @@
+/* A program to perform Euclid's
+   Algorithm to computer gcd */
+
+int gc2340nh234hd (int u);
+
+void 1main(void);

@@ -1,0 +1,5 @@
+int elsex() {
+    int a = (2 + 3) * (7 - 4) / 5;
+    int b = a * (-030);
+    return b;
+}
