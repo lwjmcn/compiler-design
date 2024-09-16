@@ -3,3 +3,5 @@ int elsex() {
     int b = a * (-030);
     return b;
 }
+
+< <= > >= != == =

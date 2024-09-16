@@ -19,6 +19,7 @@ typedef enum
      INGREAT, // >, >=
      INEQ, // =, ==
      INBANG, // !=
+     INTWOSYMBOLS,
      INNUM,
      INID,
      DONE }
@@ -111,14 +112,22 @@ TokenType getToken(void)
          else if (isalpha(c)) // letter
            state = INID;
          // more than one letter symbols
-         else if (c == '=') 
-           state = INEQ;
-         else if (c == '<')
-           state = INLESS;
-         else if (c == '>')
-           state = INGREAT;
-         else if (c == '!')
-           state = INBANG; 
+         else if (c == '=') {
+           state = INTWOSYMBOLS;
+           currentToken = ASSIGN;
+         }
+         else if (c == '<') {
+           state = INTWOSYMBOLS;
+           currentToken = LESSTHAN;
+         }
+         else if (c == '>') {
+           state = INTWOSYMBOLS;
+           currentToken = GREATTHAN;
+         }
+         else if (c == '!') {
+           state = INTWOSYMBOLS; 
+           currentToken = NEQ;
+         }
          else if (c == '/') {
            save = FALSE; // can be the start point of comments, so don't print yet
            state = INSLASH;
@@ -200,44 +209,27 @@ TokenType getToken(void)
          else 
            state = INCOMMENT;
          break;
-       case INLESS: // last character was '<'
+       case INTWOSYMBOLS: // last character was '<'
          state = DONE;
-         if (c == '=') 
-           currentToken = LESSEQUAL;
+         if (c == '=') {
+           switch (currentToken)
+           {
+             case LESSTHAN:
+               currentToken = LESSEQUAL;
+               break;
+             case GREATTHAN:
+               currentToken = GREATEQUAL;
+               break;
+             case ASSIGN:
+               currentToken = EQ;
+               break;
+             default:
+               break;
+           }
+         }
          else {
           ungetNextChar();
           save = FALSE;
-          currentToken = LESSTHAN;
-         }
-         break;
-       case INGREAT: // last character was '<'
-         state = DONE;
-         if (c == '=') 
-           currentToken = GREATEQUAL;
-         else {
-          ungetNextChar();
-          save = FALSE;
-          currentToken = GREATTHAN;
-         }
-         break;
-       case INEQ: // last character was '='
-         state = DONE;
-         if (c == '=')
-           currentToken = EQ;
-         else { 
-           ungetNextChar();
-           save = FALSE;
-           currentToken = ASSIGN;
-         }
-         break;
-       case INBANG: // last character was '!'
-         state = DONE;
-         if (c == '=') 
-           currentToken = NEQ;
-         else {
-           ungetNextChar();
-           save = FALSE;
-           currentToken = ERROR;
          }
          break;
        case INNUM:
