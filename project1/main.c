@@ -38,7 +38,7 @@ FILE * listing;
 FILE * code;
 
 /* allocate and set tracing flags */
-int EchoSource = TRUE; // debug option
+int EchoSource = FALSE; // debug option
 int TraceScan = TRUE;
 int TraceParse = FALSE;
 int TraceAnalyze = FALSE;
