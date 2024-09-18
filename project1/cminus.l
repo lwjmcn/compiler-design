@@ -1,8 +1,9 @@
 /****************************************************/
 /* File: tiny.l                                     */
-/* Lex specification for TINY                       */
+/* Lex specification for C-Minus                    */
 /* Compiler Construction: Principles and Practice   */
 /* Kenneth C. Louden                                */
+/* modified by Yejin Lee                            */
 /****************************************************/
 
 %{
@@ -15,42 +16,53 @@ char tokenString[MAXTOKENLEN+1];
 
 digit       [0-9]
 number      {digit}+
-letter      [a-zA-Z]
-identifier  {letter}+
+identifier  [a-zA-Z][a-zA-Z0-9]*
+error       [0-9][a-zA-Z0-9]*
 newline     \n
 whitespace  [ \t]+
 
 %%
 
 "if"            {return IF;}
-"then"          {return THEN;}
 "else"          {return ELSE;}
-"end"           {return END;}
-"repeat"        {return REPEAT;}
-"until"         {return UNTIL;}
-"read"          {return READ;}
-"write"         {return WRITE;}
-":="            {return ASSIGN;}
-"="             {return EQ;}
-"<"             {return LT;}
+"while"         {return WHILE;}
+"return"        {return RETURN;}
+"int"           {return INT;}
+"void"          {return VOID;}
 "+"             {return PLUS;}
 "-"             {return MINUS;}
-"*"             {return TIMES;}
-"/"             {return OVER;}
+"*"             {return MUL;}
+"/"             {return DIV;}
+";"             {return SEMICOLON;}
+","             {return COMMA;}
 "("             {return LPAREN;}
 ")"             {return RPAREN;}
-";"             {return SEMI;}
-{number}        {return NUM;}
+"{"             {return LCURLY;}
+"}"             {return RCURLY;}
+"["             {return LBRACE;}
+"]"             {return RBRACE;}
+"<="            {return LESSEQUAL;}
+"<"             {return LESSTHAN;}
+">="            {return GREATEQUAL;}
+">"             {return GREATTHAN;}
+"=="            {return EQ;}
+"="             {return ASSIGN;}
+"!="            {return NEQ;}
 {identifier}    {return ID;}
-{newline}       {lineno++;}
+{error}           {return ERROR;}
+{number}        {return NUM;}
 {whitespace}    {/* skip whitespace */}
-"{"             { char c;
+{newline}       {lineno++;}
+"/*"             { char c; char last_c='\0';
                   do
                   { c = input();
                     if (c == EOF) break;
                     if (c == '\n') lineno++;
-                  } while (c != '}');
+                    if (last_c == '*' && c == '/') break;
+                    last_c = c;
+                  } while (1);
                 }
+error           {return ERROR;}
 .               {return ERROR;}
 
 %%
