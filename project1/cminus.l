@@ -17,7 +17,7 @@ char tokenString[MAXTOKENLEN+1];
 digit       [0-9]
 number      {digit}+
 identifier  [a-zA-Z][a-zA-Z0-9]*
-error       [0-9][a-zA-Z0-9]*
+error       [0-9]+[a-zA-Z]+[a-zA-Z0-9]*
 newline     \n
 whitespace  [ \t]+
 
