@@ -17,7 +17,7 @@ char tokenString[MAXTOKENLEN+1];
 digit       [0-9]
 number      {digit}+
 identifier  [a-zA-Z][a-zA-Z0-9]*
-error       [0-9]+[a-zA-Z]+[a-zA-Z0-9]*
+iderror     [0-9]+[a-zA-Z]+[a-zA-Z0-9]*
 newline     \n
 whitespace  [ \t]+
 
@@ -49,20 +49,19 @@ whitespace  [ \t]+
 "="             {return ASSIGN;}
 "!="            {return NEQ;}
 {identifier}    {return ID;}
-{error}           {return ERROR;}
+{iderror}       {return ERROR;}
 {number}        {return NUM;}
 {whitespace}    {/* skip whitespace */}
 {newline}       {lineno++;}
 "/*"             { char c; char last_c='\0';
                   do
                   { c = input();
-                    if (c == EOF) break;
+                    if (c == EOF || c == '\0') break;
                     if (c == '\n') lineno++;
                     if (last_c == '*' && c == '/') break;
                     last_c = c;
                   } while (1);
                 }
-error           {return ERROR;}
 .               {return ERROR;}
 
 %%
