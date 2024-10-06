@@ -1,0 +1,7 @@
+if (a == b)
+  if (a<b)
+    int stmt1;
+  else
+    int stmt2;
+else
+  int stmt3;
