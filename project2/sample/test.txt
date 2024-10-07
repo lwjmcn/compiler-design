@@ -1,6 +1,7 @@
 int g(int h, int i){
   int k[4];
   k[2] = 2+1+3;
+  return;
 
 }
 int skldf33(void){
