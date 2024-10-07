@@ -1,5 +1,6 @@
-a = a + b * c;
-if (a < b) 
-  a = b;
-if (a < b < c) 
-  a = b;
+int main(void)
+{
+  a = a + b * c;
+  if (a < b) 
+    a = b;
+}

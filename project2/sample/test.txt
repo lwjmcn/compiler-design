@@ -1,0 +1,14 @@
+int g(int h, int i){
+  int k[4];
+  k[2] = 2+1+3;
+
+}
+int skldf33(void){
+ g(a,b);
+ if(ds=0)
+ {}
+ return 1;
+}
+
+
+
