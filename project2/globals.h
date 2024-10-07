@@ -1,10 +1,11 @@
 /****************************************************/
 /* File: globals.h                                  */
 /* Yacc/Bison Version                               */
-/* Global types and vars for TINY compiler          */
+/* Global types and vars for C-Minus compiler       */
 /* must come before other include files             */
 /* Compiler Construction: Principles and Practice   */
 /* Kenneth C. Louden                                */
+/* modified by Yejin Lee                            */
 /****************************************************/
 
 #ifndef _GLOBALS_H_
@@ -62,12 +63,17 @@ extern int lineno; /* source line number for listing */
 /***********   Syntax tree for parsing ************/
 /**************************************************/
 
-typedef enum {StmtK,ExpK} NodeKind;
-typedef enum {IfK,RepeatK,AssignK,ReadK,WriteK} StmtKind;
-typedef enum {OpK,ConstK,IdK} ExpKind;
+// typedef enum {StmtK,ExpK} NodeKind;
+// typedef enum {IfK,RepeatK,AssignK,ReadK,WriteK} StmtKind;
+// typedef enum {OpK,ConstK,IdK} ExpKind;
+typedef enum {VarDe, FunDe, 
+              CmpdStmt,
+              IfExpr, IfElseExpr, WhileExpr, ReturnExpr, AssignExpr, OpExpr,
+              TypeN, OpN, Const, Var, VoidParam, Param, Call, Arg } ExprKind;
 
 /* ExpType is used for type checking */
-typedef enum {Void,Integer,Boolean} ExpType;
+// typedef enum {Void,Integer,Boolean} ExpType;
+typedef enum {Int, Void} Type;
 
 #define MAXCHILDREN 3
 
@@ -75,12 +81,18 @@ typedef struct treeNode
    { struct treeNode * child[MAXCHILDREN];
      struct treeNode * sibling;
      int lineno;
-     NodeKind nodekind;
-     union { StmtKind stmt; ExpKind exp;} kind;
-     union { TokenType op;
-             int val;
-             char * name; } attr;
-     ExpType type; /* for type checking of exps */
+    //  NodeKind nodekind;
+    //  union { StmtKind stmt; ExpKind exp;} kind;
+    //  union { TokenType op;
+    //          int val;
+    //          char * name; } attr;
+    //  ExpType type; /* for type checking of exps */
+    ExprKind exprKind;
+    char *name;
+    Type type;
+    TokenType op;
+    int val;
+    char isArray;
    } TreeNode;
 
 /**************************************************/
