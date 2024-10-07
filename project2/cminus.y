@@ -14,7 +14,6 @@
 #include "parse.h"
 
 #define YYSTYPE TreeNode *
-static int savedNumber;
 static char * savedName; /* for use in assignments */
 static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
@@ -54,19 +53,20 @@ dclr_seq    : dclr_seq dclr
 dclr        : var_dclr { $$ = $1; }
             | func_dclr { $$ = $1; }
             ;
-var_dclr    : type saveName SEMICOLON
+var_dclr    : type id SEMICOLON
                  { $$ = newTreeNode(VarDe);
-                   $$->name = savedName;
+                   $$->name = $2->name;
                    $$->type = $1->type;
-                   $$->lineno = lineno;
+                   $$->lineno = $2->lineno;
                  }
-            | type saveName LBRACE saveNumber RBRACE SEMICOLON
+            | type id LBRACE num RBRACE SEMICOLON
                  { $$ = newTreeNode(VarDe);
-                   $$->name = savedName;
+                   $$->name = $2->name;
                    $$->type = $1->type;
                    $$->isArray = TRUE;
                    $$->child[0] = newTreeNode(Const);
-                    $$->child[0]->val = savedNumber;
+                    $$->child[0]->val = $4->val;
+                   $$->lineno = $2->lineno;
                  }
             ;
 type        : INT 
@@ -78,15 +78,13 @@ type        : INT
                    $$->type = Void; 
                  }
             ;
-func_dclr   : type saveName 
-              { $$ = newTreeNode(FunDe); 
-                $$->name = savedName;
-              } 
-              LPAREN params RPAREN cmpd_stmt
-                 { $$ = $3;
+func_dclr   : type id LPAREN params RPAREN cmpd_stmt
+                 { $$ = newTreeNode(FunDe); 
+                   $$->name = $2->name;
+                   $$->lineno = $2->lineno;
                    $$->type = $1->type;
-                   $$->child[0] = $5;
-                   $$->child[1] = $7;
+                   $$->child[0] = $4;
+                   $$->child[1] = $6;
                  }
             ;
 params      : param_list { $$ = $1; }
@@ -106,15 +104,15 @@ param_list  : param_list COMMA param
                  }
             | param { $$ = $1; }
             ;
-param       : type saveName
+param       : type id
                  { $$ = newTreeNode(Param);
                    $$->type = $1->type;
-                   $$->name = savedName;
+                   $$->name = $2->name;
                  }
-            | type saveName LBRACE RBRACE
+            | type id LBRACE RBRACE
                  { $$ = newTreeNode(Param);
                    $$->type = $1->type;
-                   $$->name = savedName;
+                   $$->name = $2->name;
                    $$->isArray = TRUE;
                  }
             ;
@@ -187,18 +185,15 @@ expr        : var ASSIGN expr
                  }
             | simple_expr { $$ = $1; }
             ;
-var         : saveName
+var         : id
                  { $$ = newTreeNode(Var);
-                   $$->name = savedName;
+                   $$->name = $1->name;
                  }
-            | saveName 
-              { $$ = newTreeNode(Var);
-                $$->name = savedName;
-              } 
-              LBRACE expr RBRACE
-                 { $$ = $2;
+            | id LBRACE expr RBRACE
+                 { $$ = newTreeNode(Var);
+                   $$->name = $1->name;
                    $$->isArray = TRUE;
-                   $$->child[0] = $4;
+                   $$->child[0] = $3;
                  }
             ;
 simple_expr : add_expr relop add_expr 
@@ -272,18 +267,15 @@ factor      : LPAREN expr RPAREN
                  { $$ = $2; }
             | var { $$ = $1; }
             | call { $$ = $1; }
-            | saveNumber 
+            | num 
                  { $$ = newTreeNode(Const);
-                   $$->val = savedNumber;
+                   $$->val = $1->val;
                  }
             ;
-call        : saveName 
-              { $$ = newTreeNode(Call);
-                $$->name = savedName; 
-              }
-              LPAREN args RPAREN
-                 { $$ = $2;
-                   $$->child[0] = $4;
+call        : id LPAREN args RPAREN
+                 { $$ = newTreeNode(Call);
+                   $$->name = $1->name; 
+                   $$->child[0] = $3;
                  }
             ;
 args      : arg_list { $$ = $1; }
@@ -300,14 +292,14 @@ arg_list  : arg_list COMMA expr
                  }
             | expr { $$ = $1; }
             ;
-saveName    : ID
-                 { savedName = copyString(tokenString);
-                   savedLineNo = lineno;
+id          : ID
+                 { $$ = newTreeNode(Var);
+                   $$->name = copyString(tokenString);
                  }
             ;
-saveNumber  : NUM
-                 { savedNumber = atoi(tokenString);
-                   savedLineNo = lineno;
+num         : NUM
+                 { $$ = newTreeNode(Var);
+                   $$->val = atoi(tokenString);
                  }
             ;
 empty       :;
