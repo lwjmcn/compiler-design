@@ -1,9 +1,10 @@
 /****************************************************/
 /* File: analyze.c                                  */
 /* Semantic analyzer implementation                 */
-/* for the TINY compiler                            */
+/* for the C-Minus compiler                         */
 /* Compiler Construction: Principles and Practice   */
 /* Kenneth C. Louden                                */
+/* modified by Yejin Lee                            */
 /****************************************************/
 
 #include "globals.h"
@@ -46,38 +47,27 @@ static void nullProc(TreeNode * t)
  * the symbol table 
  */
 static void insertNode( TreeNode * t)
-{ switch (t->nodekind)
-  { case StmtK:
-      switch (t->kind.stmt)
-      { case AssignK:
-        case ReadK:
-          if (st_lookup(t->attr.name) == -1)
-          /* not yet in table, so treat as new definition */
-            st_insert(t->attr.name,t->lineno,location++);
-          else
-          /* already in table, so ignore location, 
-             add line number of use only */ 
-            st_insert(t->attr.name,t->lineno,0);
-          break;
-        default:
-          break;
-      }
+{ switch (t->exprKind)
+  { case VarDe:
+    case FunDe:
+    case Param:
+      if (st_lookup(t->name) == -1)
+        /* not yet in table, so treat as new definition */
+        st_insert(t->name,t->lineno,location++);
+      else
+      /* already in table, so ignore location, 
+         add line number of use only */ 
+        st_insert(t->name,t->lineno,0);
       break;
-    case ExpK:
-      switch (t->kind.exp)
-      { case IdK:
-          if (st_lookup(t->attr.name) == -1)
-          /* not yet in table, so treat as new definition */
-            st_insert(t->attr.name,t->lineno,location++);
-          else
-          /* already in table, so ignore location, 
-             add line number of use only */ 
-            st_insert(t->attr.name,t->lineno,0);
-          break;
-        default:
-          break;
-      }
-      break;
+    case Var: 
+      if (st_lookup(t->name) == -1)
+      /* not yet in table, so treat as new definition */
+        st_insert(t->name,t->lineno,location++);
+      else
+      /* already in table, so ignore location, 
+         add line number of use only */ 
+        st_insert(t->name,t->lineno,0);
+      break;      
     default:
       break;
   }
@@ -94,56 +84,34 @@ void buildSymtab(TreeNode * syntaxTree)
   }
 }
 
-static void typeError(TreeNode * t, char * message)
-{ fprintf(listing,"Type error at line %d: %s\n",t->lineno,message);
-  Error = TRUE;
-}
+// static void typeError(TreeNode * t, char * message)
+// { fprintf(listing,"Type error at line %d: %s\n",t->lineno,message);
+//   Error = TRUE;
+// }
 
 /* Procedure checkNode performs
  * type checking at a single tree node
  */
 static void checkNode(TreeNode * t)
-{ switch (t->nodekind)
-  { case ExpK:
-      switch (t->kind.exp)
-      { case OpK:
-          if ((t->child[0]->type != Integer) ||
-              (t->child[1]->type != Integer))
-            typeError(t,"Op applied to non-integer");
-          if ((t->attr.op == EQ) || (t->attr.op == LT))
-            t->type = Boolean;
-          else
-            t->type = Integer;
-          break;
-        case ConstK:
-        case IdK:
-          t->type = Integer;
-          break;
-        default:
-          break;
-      }
+{ switch (t->exprKind)
+  { case Const:
+    case Var:
+      t->type = Int;
       break;
-    case StmtK:
-      switch (t->kind.stmt)
-      { case IfK:
-          if (t->child[0]->type == Integer)
-            typeError(t->child[0],"if test is not Boolean");
-          break;
-        case AssignK:
-          if (t->child[0]->type != Integer)
-            typeError(t->child[0],"assignment of non-integer value");
-          break;
-        case WriteK:
-          if (t->child[0]->type != Integer)
-            typeError(t->child[0],"write of non-integer value");
-          break;
-        case RepeatK:
-          if (t->child[1]->type == Integer)
-            typeError(t->child[1],"repeat test is not Boolean");
-          break;
-        default:
-          break;
-      }
+    case OpExpr:
+      if ((t->child[0]->type != Int) || (t->child[1]->type != Int))
+        fprintf(listing, "Error: invalid operation at line %d\n", lineno);
+      t->type = Int;
+      break;
+    case IfExpr:
+    case IfElseExpr:
+    case WhileExpr:
+      if(t->child[0]->type != Int)
+        fprintf(listing, "Error: invalid condition at line %d\n", lineno);
+      break;
+    case AssignExpr:
+      if(t->child[0]->type != Int || t->child[1]->type != Int || t->child[0]->type != t->child[1]->type)
+          fprintf(listing, "Error: invalid assignment at line %d\n", lineno);
       break;
     default:
       break;
