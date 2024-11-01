@@ -1,0 +1,26 @@
+int main (void) 
+{
+  int
+      y;
+  int y;
+  int
+      y
+      ;
+  
+  int[] x;
+  x +
+      y;
+  if(x+
+      y)
+  {}
+
+  return 0;
+}
+
+/*
+Symbol "y" is redefined at line 5 (already defined at line 4)
+Symbol "y" is redefined at line 7 (already defined at line 4 5)
+invalid operation at line 11
+invalid operation at line 13
+invalid conditiion at line 15
+*/

@@ -1,0 +1,11 @@
+int main(void)
+{
+  int y;
+  x+y;
+  x+y;
+}
+/*
+undeclared variable "x" is used at line 4
+invalid operation at line 4
+invalid operation at line 5
+*/

@@ -1,0 +1,14 @@
+int main(void) 
+{
+  x(1,2);
+
+  if(x()){}
+
+  return 0;
+}
+/*
+undeclared function "x" is called at line 3
+invalid function call at line 3 (name : "x")
+invalid function call at line 5 (name : "x")
+Iinvalid conditiion at line5
+*/
