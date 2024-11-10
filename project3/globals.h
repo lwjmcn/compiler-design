@@ -68,12 +68,12 @@ extern int lineno; /* source line number for listing */
 // typedef enum {OpK,ConstK,IdK} ExpKind;
 typedef enum {VarDe, FunDe, 
               CmpdStmt,
-              IfExpr, IfElseExpr, WhileExpr, ReturnExpr, AssignExpr, OpExpr,
-              TypeN, OpN, Const, Var, VoidParam, Param, Call, Arg } ExprKind;
+              IfStmt, IfElseStmt, WhileStmt, ReturnStmt, AssignExpr, OpExpr,
+              TypeN, OpN, Const, Var, VoidParam, Param, Call } ExprKind;
 
 /* ExpType is used for type checking */
 // typedef enum {Void,Integer,Boolean} ExpType;
-typedef enum {Int, Void} Type;
+typedef enum {Int, Void, Null} Type;
 
 #define MAXCHILDREN 3
 

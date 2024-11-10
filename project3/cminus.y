@@ -14,8 +14,6 @@
 #include "parse.h"
 
 #define YYSTYPE TreeNode *
-static char * savedName; /* for use in assignments */
-static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
 static int yylex(void); // added 11/2/11 to ensure no conflict with lex
 
@@ -64,8 +62,10 @@ var_dclr    : type id SEMICOLON
                    $$->name = $2->name;
                    $$->type = $1->type;
                    $$->isArray = TRUE;
-                   $$->child[0] = newTreeNode(Const);
-                    $$->child[0]->val = $4->val;
+                   YYSTYPE i = newTreeNode(Const);
+                    i->val = $4->val;
+                    i->type = Int;
+                    $$->child[0] = i;
                    $$->lineno = $2->lineno;
                  }
             ;
@@ -154,34 +154,39 @@ expr_stmt   : expr SEMICOLON { $$ = $1; }
             | SEMICOLON { $$ = NULL; }
             ;
 select_stmt : IF LPAREN expr RPAREN stmt %prec NOELSE
-                 { $$ = newTreeNode(IfExpr);
+                 { $$ = newTreeNode(IfStmt);
                    $$->child[0] = $3;
                    $$->child[1] = $5;
+                   $$->lineno = $5->lineno;
                  }
             | IF LPAREN expr RPAREN stmt ELSE stmt
-                 { $$ = newTreeNode(IfElseExpr);
+                 { $$ = newTreeNode(IfElseStmt);
                    $$->child[0] = $3;
                    $$->child[1] = $5;
                    $$->child[2] = $7;
+                   $$->lineno = $7->lineno;
                  }
             ;
 iter_stmt   : WHILE LPAREN expr RPAREN stmt
-                 { $$ = newTreeNode(WhileExpr);
+                 { $$ = newTreeNode(WhileStmt);
                    $$->child[0] = $3;
                    $$->child[1] = $5;
+                   $$->lineno = $5->lineno;
                  }
             ;
 return_stmt : RETURN SEMICOLON
-                 { $$ = newTreeNode(ReturnExpr); }
+                 { $$ = newTreeNode(ReturnStmt); }
             | RETURN expr SEMICOLON
-                 { $$ = newTreeNode(ReturnExpr);
+                 { $$ = newTreeNode(ReturnStmt);
                    $$->child[0] = $2;
+                   $$->lineno = $2->lineno;
                  }
             ;
 expr        : var ASSIGN expr
                  { $$ = newTreeNode(AssignExpr);
                    $$->child[0] = $1;
                    $$->child[1] = $3;
+                   $$->lineno = $1->lineno;
                  }
             | simple_expr { $$ = $1; }
             ;
@@ -194,6 +199,7 @@ var         : id
                    $$->name = $1->name;
                    $$->isArray = TRUE;
                    $$->child[0] = $3;
+                   $$->lineno = $1->lineno;
                  }
             ;
 simple_expr : add_expr relop add_expr 
@@ -201,6 +207,7 @@ simple_expr : add_expr relop add_expr
                    $$->child[0] = $1;
                    $$->child[1] = $3;
                    $$->op = $2->op; 
+                   $$->lineno = $1->lineno;
                  }
             | add_expr { $$ = $1; }
             ;
@@ -234,6 +241,7 @@ add_expr    : add_expr add_op term
                    $$->child[0] = $1;
                    $$->child[1] = $3;
                    $$->op = $2->op;
+                   $$->lineno = $1->lineno;
                  }
             | term { $$ = $1; }
             ;
@@ -251,6 +259,7 @@ term        : term mul_op factor
                    $$->child[0] = $1;
                    $$->child[1] = $3;
                    $$->op = $2->op;
+                   $$->lineno = $1->lineno;
                  }
             | factor { $$ = $1; }
             ;
@@ -270,12 +279,15 @@ factor      : LPAREN expr RPAREN
             | num 
                  { $$ = newTreeNode(Const);
                    $$->val = $1->val;
+                   $$->type = Int;
                  }
             ;
 call        : id LPAREN args RPAREN
                  { $$ = newTreeNode(Call);
                    $$->name = $1->name; 
                    $$->child[0] = $3;
+                   $$->type = $1->type;
+                   $$->lineno = $1->lineno;
                  }
             ;
 args      : arg_list { $$ = $1; }
@@ -300,6 +312,7 @@ id          : ID
 num         : NUM
                  { $$ = newTreeNode(Var);
                    $$->val = atoi(tokenString);
+                   $$->type = Int;
                  }
             ;
 empty       :;
