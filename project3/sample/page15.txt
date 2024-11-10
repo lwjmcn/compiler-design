@@ -1,13 +1,13 @@
 int main (void) 
 {
   int
-      y;
+      y;  
   int y;
   int
       y
       ;
-  
-  int[] x;
+
+  int x[5];
   x +
       y;
   if(x+

@@ -1,6 +1,0 @@
-int main(void)
-{
-  a = a + b * c;
-  if (a < b) 
-    a = b = c;
-}
