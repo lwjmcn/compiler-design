@@ -176,16 +176,16 @@ void printTree( TreeNode * tree )
       case CmpdStmt:
         fprintf(listing, "Compound Statement:\n");
         break;
-      case IfExpr:
+      case IfStmt:
         fprintf(listing,"If Statement:\n");
         break;
-      case IfElseExpr:
+      case IfElseStmt:
         fprintf(listing,"If-Else Statement:\n");
         break;
-      case WhileExpr:
+      case WhileStmt:
         fprintf(listing, "While Statement:\n");
         break;
-      case ReturnExpr:
+      case ReturnStmt:
         if(tree->child[0] == NULL)
           fprintf(listing, "Non-value Return Statement\n");
         else
