@@ -86,6 +86,7 @@ TreeNode * newTreeNode(ExprKind exprKind)
     t->exprKind = exprKind;
     t->lineno = lineno;
     t->isArray = FALSE;
+    t->type = Null;
   }
   return t;
 }
