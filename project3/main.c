@@ -41,7 +41,7 @@ FILE * code;
 int EchoSource = FALSE; // debug option
 int TraceScan = FALSE;
 int TraceParse = FALSE;
-int TraceAnalyze = TRUE; // print symbol table
+int TraceAnalyze = FALSE; // print symbol table
 int TraceCode = FALSE;
 
 int Error = FALSE;

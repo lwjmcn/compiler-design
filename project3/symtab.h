@@ -4,27 +4,39 @@
 /* (allows only one symbol table)                   */
 /* Compiler Construction: Principles and Practice   */
 /* Kenneth C. Louden                                */
+/* modified by Yejin Lee                            */
 /****************************************************/
 
 #ifndef _SYMTAB_H_
 #define _SYMTAB_H_
 
-/* Procedure st_insert inserts line numbers and
- * memory locations into the symbol table
- * loc = memory location is inserted only the
- * first time, otherwise ignored
- */
-void st_insert( char * name, int lineno, int loc );
+/* initialize for symbol table generation*/
+void initSymtab();
 
-/* Function st_lookup returns the memory 
- * location of a variable or -1 if not found
- */
-int st_lookup ( char * name );
+/* check symbols in the table */
+int* checkPredefined(char* name, char* kind, int lineno);
+char* findType(char * name, char* kind);
+ 
+/* add symbols to the table */
+void addNode( char * name, char* kind, char* type, int lineno);
 
-/* Procedure printSymTab prints a formatted 
- * listing of the symbol table contents 
- * to the listing file
- */
+/* check parameter types of functions*/
+void addParamType(char * functionName, int paramLocation, char* paramType);
+int checkParam(char* functionName, int argLoc, char* argType);
+int checkVoidParam(char* functionName);
+
+/* generate the symbol table */
+void insertScope(char* scopeName);
+void exitScope();
+
+/* traverse the symbol table */
+void initCurrentScope() ;
+void enterScope();
+void popScope();
+
+/* print the symbol table */
 void printSymTab(FILE * listing);
+void printScopes(FILE * listing);
+void printFunctions(FILE * listing);
 
 #endif
